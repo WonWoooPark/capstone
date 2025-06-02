@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '../../../../components/Header'
-import { useState, useEffect } from 'react'
 import { Accommodation, Review } from '../../../../types'
 
 interface PageProps {
@@ -12,18 +11,30 @@ interface PageProps {
   }
 }
 
+// (1) generateStaticParams 함수 추가
+export async function generateStaticParams(): Promise<{ id: string; category: string }[]> {
+  // 여기서 실제 데이터베이스나 API 호출로 id와 category를 받아와야 하지만,
+  // 예시로 mock 데이터만 작성해볼게요.
+  return [
+    { id: '1', category: 'cleanliness' },
+    { id: '1', category: 'accuracy' },
+    { id: '2', category: 'cleanliness' },
+    { id: '2', category: 'accuracy' }
+  ]
+}
+
 const CategoryDetail = ({ params }: PageProps) => {
   const [accommodation, setAccommodation] = useState<Accommodation | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const categories = [
-    { id: 'cleanliness', name: '청결도'},
-    { id: 'accuracy', name: '정확도'},
-    { id: 'checkin', name: '체크인'},
+    { id: 'cleanliness', name: '청결도' },
+    { id: 'accuracy', name: '정확도' },
+    { id: 'checkin', name: '체크인' },
     { id: 'communication', name: '의사소통' },
-    { id: 'location', name: '위치'},
-    { id: 'value', name: '가격 대비 만족도'}
+    { id: 'location', name: '위치' },
+    { id: 'value', name: '가격 대비 만족도' }
   ]
 
   const categoryKeywords = {
@@ -36,7 +47,6 @@ const CategoryDetail = ({ params }: PageProps) => {
   }
 
   useEffect(() => {
-    // 실제 구현에서는 API 호출로 대체
     const mockAccommodation: Accommodation = {
       id: params.id,
       title: '서울 시청 근처 아파트',
@@ -126,7 +136,7 @@ const CategoryDetail = ({ params }: PageProps) => {
     let highlightedText = text
     keywords.forEach(keyword => {
       const regex = new RegExp(keyword, 'gi')
-      highlightedText = highlightedText.replace(regex, match => 
+      highlightedText = highlightedText.replace(regex, match =>
         `<span class="bg-yellow-200">${match}</span>`
       )
     })
@@ -146,8 +156,6 @@ const CategoryDetail = ({ params }: PageProps) => {
       <main className="max-w-7xl mx-auto px-8 sm:px-16">
         <div className="pt-6">
           <h1 className="text-3xl font-semibold mb-6">상세 평점</h1>
-          
-          {/* 카테고리 탭 */}
           <div className="flex space-x-4 mb-8 overflow-x-auto pb-2">
             {categories.map((cat) => (
               <button
@@ -163,7 +171,6 @@ const CategoryDetail = ({ params }: PageProps) => {
             ))}
           </div>
 
-          {/* 평점 요약 */}
           <div className="bg-gray-50 p-6 rounded-xl mb-8">
             <div className="flex items-center justify-between">
               <div>
@@ -176,9 +183,6 @@ const CategoryDetail = ({ params }: PageProps) => {
                     <span className="text-blue-500">AI {categoryRating.aiRating.toFixed(1)}</span>
                   </div>
                 </div>
-                <div className="mt-2 text-sm text-gray-600">
-                  AI 정확도: {currentCategory?.accuracy}%
-                </div>
               </div>
               <div className="text-right">
                 <p className="text-gray-600">전체 리뷰</p>
@@ -187,7 +191,6 @@ const CategoryDetail = ({ params }: PageProps) => {
             </div>
           </div>
 
-          {/* 리뷰 목록 */}
           <div className="space-y-6">
             {reviews.map((review) => (
               <div key={review.id} className="border-b pb-6">
@@ -203,9 +206,9 @@ const CategoryDetail = ({ params }: PageProps) => {
                     <span className="ml-2 text-blue-500">AI {review.aiRating.toFixed(1)}</span>
                   </div>
                 </div>
-                <p 
+                <p
                   className="text-gray-700 mb-2"
-                  dangerouslySetInnerHTML={{ 
+                  dangerouslySetInnerHTML={{
                     __html: highlightText(review.comment, params.category)
                   }}
                 />
@@ -219,4 +222,4 @@ const CategoryDetail = ({ params }: PageProps) => {
   )
 }
 
-export default CategoryDetail 
+export default CategoryDetail
